@@ -3,4 +3,10 @@ the derivative of the incoming water hardness sensor and compares it to an arbit
 If the derivative is greater than the threshold 3 or more times, the system will signal the 
 service run to end. 
 
+Circuit includes signal from the Jenway Meter -> AD620 -> Arduino
+
+The AD620 is calibrated with a zero around -20mv coming in from the Jenway. 
+
+Wiring Schematic to be added later. 
+
 - Armando Correa 9/1/2023
