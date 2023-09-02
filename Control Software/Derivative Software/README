@@ -1,0 +1,4 @@
+This folder contains the code that is used to signal the end of the service run. The algorithm looks at 
+the derivative of the incoming water hardness sensor and compares it to an arbitrary threshold. 
+If the derivative is greater than the threshold 3 or more times, the system will signal the 
+service run to end. 
