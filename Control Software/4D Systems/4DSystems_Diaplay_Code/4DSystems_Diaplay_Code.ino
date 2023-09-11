@@ -1,5 +1,5 @@
 //Miguel Sanchez
-//Last Edited: 9/7/23
+//Last Edited: 9/11/23
 //Code if for the 4D display tocuh screen that will control the servos as well as displaying multiple values such as
 //Water hardness, Elapsed time, EC, cumulative ion exchange, and bed volumes
 
@@ -101,13 +101,15 @@ void loop() {
     elapsedTime %= 60000;
     unsigned long seconds = elapsedTime / 1000; // 1 second = 1000 milliseconds
 
+    
+
     if(currentTime - previousMillis >= updateInterval){
       float hardness = analogRead(HNpin); // analog in for hardnsss
       float ec = analogRead(ECpin); // analog in for ec
       float FloMetmV = analogRead(FloMetpin); // analog in for flow meter
       float TDucer = analogRead(Transducer);
 
-      float TDucerVoltage = TDucer / 204.6;
+      //float TDucerVoltage = TDucer / 204.6;
       float flowRate  = FloMetmV * 0.03;
       float bedVolume = (flowRate / (4 * 1000) / 530.1438) + previousbedvolume;
       previousbedvolume = bedVolume;
@@ -115,31 +117,31 @@ void loop() {
      updateDisplay(String(hardness), String(ec), String(bedVolume, 4), hours, minutes, seconds);
 
      previousMillis = currentTime;
-
+      /*
      if(TDucerVoltage >= 30){
        genie.WriteObject(GENIE_OBJ_LED, 9, 1);
      }
      else{
        genie.WriteObject(GENIE_OBJ_LED, 9, 0);
-     }
+     }*
     }
 
-    if(AUTOMODETRANS){
-      //do something
-    }
+      if(AUTOMODETRANS){
+        //do something
+      }
 
-    if(AUTOMODETRANS){
-      //do something
+      if(AUTOMODETRANS){
+        //do something
+      }*/
     }
   }
-
 }
 
 void updateDisplay(String hardnessStr, String ecStr, String bedVolumeStr, unsigned long hours, unsigned long minutes, unsigned long seconds) 
 {
   genie.WriteStr(2, String(hours) + ":" + (minutes < 10 ? "0" : "") + String(minutes) + ":" + (seconds < 10 ? "0" : "" ) + String(seconds));
   genie.WriteStr(3, hardnessStr);
-  //genie.WriteStr(4, ecStr);
+  genie.WriteStr(4, ecStr);
   genie.WriteStr(5, bedVolumeStr);
   genie.WriteStr(6, "SomeValue"); // 
 }
