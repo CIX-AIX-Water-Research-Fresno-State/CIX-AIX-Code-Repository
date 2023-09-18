@@ -28,6 +28,7 @@ float Pressure;
 float bedVolume;
 unsigned long currentTime;
 const int OverPressure = 50; //units [psi]
+float currentFlowRate = 0;
 
 // Constants for PID control
 const float Kp = 1.0;   // Proportional gain
@@ -268,12 +269,12 @@ void TransRegen()
 }
 
 void RegenPumpSequence() {
-  //Local Variable Declarations
+ 
       
 }
 
-void CalculateFlow(){
-    float flowRate  = Flow * 0.03;
+void CalculateBedVolumes(){
+    float flowRate  = Flow * 0.03; //x
     float bedVolume = (flowRate / (4 * 1000) / 530.1438) + previousbedvolume;
     previousbedvolume = bedVolume;
     
@@ -286,14 +287,15 @@ void ReadSensors(){
   Pressure = analogRead(PressurePin);
 }
 
-float RegenPID(float currentFlowRate) {
+float RegenPID(float currentFlowRate)
+ {
     
-int UpperFlowLimit = 220; //units [ml/min]
-int impulseSignal = 100; // RegenPump 45 RPM
-analogWrite(RegenPump,impulseSignal);
-delay(2000);
-ReadSensors();
-float mappedFlowRate = map(Flow, 0, 1023, 0, UpperFlowLimit); //maps analog Flowmeter Signal from 0 - 1023 to 0 ml/min - 220 ml/min enables 0.215ml/min resolution
+    int UpperFlowLimit = 220; //units [ml/min]
+    int impulseSignal = 100; // RegenPump 45 RPM
+    analogWrite(RegenPump,impulseSignal);
+    delay(2000);
+    ReadSensors();
+    float mappedFlowRate = map(Flow, 0, 1023, 0, UpperFlowLimit); //maps analog Flowmeter Signal from 0 - 1023 to 0 ml/min - 220 ml/min enables 0.215ml/min resolution
 
 
   // Calculate the error
@@ -317,103 +319,17 @@ float mappedFlowRate = map(Flow, 0, 1023, 0, UpperFlowLimit); //maps analog Flow
 
 void SteadyAutoMode()
 {
-SteadyRegen();
-ReadSensors();
-
-if(Pressure < OverPressure )
-{
-    
-   pumpSpeed = RegenPID(currentFlowRate);
-   analogWrite(RegenPump,pumpSpeed);
-}
 
 }
+
+
 
 void TransAuto(){
 
 }
 
-void setup() {
-Serial.begin(115200);
-genie.Begin(Serial);
-
-  /* Initialise the library and set it to 'servo mode' */
-  HCPCA9685.Init(SERVO_MODE);
-
-  /* Wake the device up */
-  HCPCA9685.Sleep(false);
-
-pinMode(RESETLINE, 1);
-digitalWrite(RESETLINE, 1);
-delay(100);
-digitalWrite(RESETLINE, 0);
-delay(2000);
 
 
-//Pin Declaration for Auto Control
-pinMode(RegenPump,OUTPUT);
-pinMode(ServicePump,OUTPUT);
-
-genie.AttachEventHandler(IXControls);
-
-}
-
-void loop() {
-
-  genie.DoEvents(); // checks for new events from the touch screen
-
-  if (StartStopState){
-    currentTime = millis(); // Get the current time
-    unsigned long elapsedTime = currentTime - startTime; // Calculate elapsed time
-    
-    // Calculate hours, minutes, and seconds
-    unsigned long hours = elapsedTime / 3600000; // 1 hour = 3600000 milliseconds
-    elapsedTime %= 3600000;
-    unsigned long minutes = elapsedTime / 60000; // 1 minute = 60000 milliseconds
-    elapsedTime %= 60000;
-    unsigned long seconds = elapsedTime / 1000; // 1 second = 1000 milliseconds
-
-    
-
-    if(currentTime - previousMillis >= updateInterval)
-    {
-
-    ReadSensors();
-    CalculateFlow();
-    updateDisplay(String(WaterHardness), String(EC), String(bedVolume, 4), hours, minutes, seconds);
-
-    }
-
-    if(AUTOMODESTEADY)
-    {
-        SteadyAutoMode();
-    }
-
-  
-    }
-  }
-  
-
-
-
-
-//updateDisplay Function
-//-----------------------
-
-void updateDisplay(String hardnessStr, String ecStr, String bedVolumeStr, unsigned long hours, unsigned long minutes, unsigned long seconds) 
-{
-genie.WriteStr(2, String(hours) + ":" + (minutes < 10 ? "0" : "") + String(minutes) + ":" + (seconds < 10 ? "0" : "" ) + String(seconds));
-genie.WriteStr(3, hardnessStr);
-genie.WriteStr(4, ecStr);
-genie.WriteStr(5, flow_value);
-genie.WriteStr(6, "SomeValue"); // 
-
-previousMillis = currentTime;
-}
-
- 
-//IXControls Function
-//---------------------
 
 void IXControls()
 {
@@ -609,35 +525,103 @@ genieFrame Event;
   }
 }
 
+void updateDisplay(String hardnessStr, String ecStr, String bedVolumeStr, unsigned long hours, unsigned long minutes, unsigned long seconds) 
+{
+genie.WriteStr(2, String(hours) + ":" + (minutes < 10 ? "0" : "") + String(minutes) + ":" + (seconds < 10 ? "0" : "" ) + String(seconds));
+genie.WriteStr(3, hardnessStr);
+genie.WriteStr(4, ecStr);
+genie.WriteStr(5, flow_value);
+genie.WriteStr(6, "SomeValue"); // 
+
+previousMillis = currentTime;
+}
 
 
+void setup() {
+Serial.begin(115200);
+genie.Begin(Serial);
 
-void AbsoluteFiend() {
+  /* Initialise the library and set it to 'servo mode' */
+  HCPCA9685.Init(SERVO_MODE);
 
- //Local Variable Declaration
- bool  PumpState;
- float Hardness_Reading = A0;
- float EC_Reading = A1; 
- float Flowmeter_Reading = A2;
- float Pressure_Reading = A3;
- const int Red_Pump = 5;
- const int Blue_Pump = 6;
+  /* Wake the device up */
+  HCPCA9685.Sleep(false);
+
+pinMode(RESETLINE, 1);
+digitalWrite(RESETLINE, 1);
+delay(100);
+digitalWrite(RESETLINE, 0);
+delay(2000);
 
 
+//Pin Declaration for Auto Control
+pinMode(RegenPump,OUTPUT);
+pinMode(ServicePump,OUTPUT);
 
- float OverPressure = analogRead(Pressure_Reading);
- if(OverPressure >= 800) {
-    PumpState = 0;
-  }
-  else{
-    PumpState=1;
-  }
+genie.AttachEventHandler(IXControls);
+
+}
+
+void loop() {
+
+  genie.DoEvents(); // checks for new events from the touch screen
+
+  if (StartStopState){
+    currentTime = millis(); // Get the current time
+    unsigned long elapsedTime = currentTime - startTime; // Calculate elapsed time
+    
+    // Calculate hours, minutes, and seconds
+    unsigned long hours = elapsedTime / 3600000; // 1 hour = 3600000 milliseconds
+    elapsedTime %= 3600000;
+    unsigned long minutes = elapsedTime / 60000; // 1 minute = 60000 milliseconds
+    elapsedTime %= 60000;
+    unsigned long seconds = elapsedTime / 1000; // 1 second = 1000 milliseconds
+
+    
+
+    if(currentTime - previousMillis >= updateInterval)
+    {
+
+    ReadSensors();
+    CalculateBedVolumes();
+    updateDisplay(String(WaterHardness), String(EC), String(bedVolume, 4), hours, minutes, seconds);
+
+    }
+
+    if(AUTOMODESTEADY)
+    {
+    //Local Variable Declaration
+    int RegenVolumeLimit = 912; //921ml
+    int CumulativeFlow =0; 
+    int pumpSpeed = 0;
+    float mappedFlowRate = 0;
+
+    SteadyRegen(); //throws valves to regen mode steady stategenie.WriteObject(GENIE_OBJ_LED, 0, 0);
+    genie.WriteObject(GENIE_OBJ_LED, 1, 0);
+    genie.WriteObject(GENIE_OBJ_LED, 2, 1);
+    genie.WriteObject(GENIE_OBJ_LED, 3, 1);
+    genie.WriteObject(GENIE_OBJ_LED, 4, 0);
+    genie.WriteObject(GENIE_OBJ_LED, 5, 0);
+    delay(1000); // gives valves some time to settle
+    ReadSensors(); // updates current sensor values
+    CalculateBedVolumes(); //Finds Bed Volumes
+    updateDisplay(String(WaterHardness), String(EC), String(bedVolume, 4), hours, minutes, seconds); //Updates Display
+
+        while(CumulativeFlow  < RegenVolumeLimit && Pressure < OverPressure )
+        {   
+        analogWrite(ServicePump, 255);
+        delay(60000); // 1min
+        ReadSensors(); // read in flow value
+        mappedFlowRate = map(Flow, 0, 1023, 0, 250); //maps 0-1023 signal from meter to 0-250ml/min 0.244ml/min resolution
+        CumulativeFlow = CumulativeFlow+mappedFlowRate; 
+        }
+    analogWrite(ServicePump,0);
+    genie.WriteObject(GENIE_OBJ_LED, 1, 0);
+    genie.WriteObject(GENIE_OBJ_LED, 2, 0);
+    genie.WriteObject(GENIE_OBJ_LED, 3, 1);
+    genie.WriteObject(GENIE_OBJ_LED, 4, 0);
+    genie.WriteObject(GENIE_OBJ_LED, 5, 0);
   
- 
-
-
-
-
-
-  
+    }
+  }
 }
