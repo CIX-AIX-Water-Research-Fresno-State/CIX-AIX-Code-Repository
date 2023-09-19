@@ -29,6 +29,7 @@ float bedVolume;
 unsigned long currentTime;
 const int OverPressure = 50; //units [psi]
 float currentFlowRate = 0;
+int CumulativeFlow =0; 
 
 // Constants for PID control
 const float Kp = 1.0;   // Proportional gain
@@ -592,8 +593,8 @@ void loop() {
     {
     //Local Variable Declaration
     int RegenVolumeLimit = 912; //921ml
-    int CumulativeFlow =0; 
-    int pumpSpeed = 0;
+    int PumpSpeed = 203; // = 255/200*(known RPM for desired flow rate) in this case 19ml/min is desired and 130RPM is the known 
+    // RPM that gives apprx 19ml/min. So, 255/200*130 = 166
     float mappedFlowRate = 0;
 
     SteadyRegen(); //throws valves to regen mode steady stategenie.WriteObject(GENIE_OBJ_LED, 0, 0);
@@ -609,16 +610,33 @@ void loop() {
 
         while(CumulativeFlow  < RegenVolumeLimit && Pressure < OverPressure )
         {   
-        analogWrite(ServicePump, 255);
-        delay(60000); // 1min
-        ReadSensors(); // read in flow value
+        analogWrite(RegenPump, PumpSpeed);
+        for (int ii = 1; ii = 4; ii++)
+        {
+            delay(15000;) //15 sec.
+            ReadSensors();
+            updateDisplay(String(Flow), String("Place Holder"), String(EC, 4), hours, minutes, seconds);
+            
+            CumulativeFlow = CumulativeFlow + Flow;
+        }
+        delay(15000); // 15 sec
+        ReadSensors(); // read in flow value after 15 seconds
+        updateDisplay(String(Flow), String(CumulativeFlow), String(EC, 4), hours, minutes, seconds); //gives flow rate value from flow
         mappedFlowRate = map(Flow, 0, 1023, 0, 250); //maps 0-1023 signal from meter to 0-250ml/min 0.244ml/min resolution
         CumulativeFlow = CumulativeFlow+mappedFlowRate; 
+        genie.WriteObject(GENIE_OBJ_LED, 1, 1);
+        genie.WriteObject(GENIE_OBJ_LED, 2, 1);
+        genie.WriteObject(GENIE_OBJ_LED, 3, 1);
+        genie.WriteObject(GENIE_OBJ_LED, 4, 1);
+        genie.WriteObject(GENIE_OBJ_LED, 5, 1);
+
+       
         }
+         updateDisplay(String("shits done"), String(CumulativeFlow), String(EC, 4), hours, minutes, seconds); //Updates Display
     analogWrite(ServicePump,0);
     genie.WriteObject(GENIE_OBJ_LED, 1, 0);
     genie.WriteObject(GENIE_OBJ_LED, 2, 0);
-    genie.WriteObject(GENIE_OBJ_LED, 3, 1);
+    genie.WriteObject(GENIE_OBJ_LED, 3, 0);
     genie.WriteObject(GENIE_OBJ_LED, 4, 0);
     genie.WriteObject(GENIE_OBJ_LED, 5, 0);
   
