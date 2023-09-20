@@ -1,0 +1,16 @@
+To Do:
+
+Calibrate Regen and Service Pump. Find pump coefficients to establish 0-255 signal for pump control. 
+
+PID may fix this ^^?
+
+Get out of service and get into rinse, rinse will use meter feedback derivbative to end run.
+
+Switch to service and end with derivative. 
+
+GG. 
+
+Manual Mode ToDo:
+- Wire DAQ
+- Wire Jenways
+- Epoxy End caps
