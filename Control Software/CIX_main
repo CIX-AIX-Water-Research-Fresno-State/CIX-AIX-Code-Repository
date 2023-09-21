@@ -601,7 +601,7 @@ void loop() {
     {
     //Local Variable Declaration
     int RegenVolumeLimit = 921; //921ml
-    int PumpSpeed = 74; // = 255/200*(known RPM for desired flow rate) in this case 19ml/min is desired and 130RPM is the known 
+    int PumpSpeed = 255; // = 255/200*(known RPM for desired flow rate) in this case 19ml/min is desired and 130RPM is the known 
     // RPM that gives apprx 19ml/min. So, 255/200*130 = 166
     float mappedFlowRate = 0;
     float TempFlow = 0;
@@ -619,9 +619,9 @@ void loop() {
     CalculateBedVolumes(); //Finds Bed Volumes
     updateDisplay(String(WaterHardness), String(EC), String(bedVolume, 4), hours, minutes, seconds); //Updates Display
 
-        while(CumulativeFlow  < RegenVolumeLimit && Pressure < OverPressure ) //will run pump until limit is reached. Needs pump coeffcient. Pumps and Flowmeter must be calibrated for final mode.
+        while(CumulativeFlow  < RegenVolumeLimit && Pressure < OverPressure )
         {   
-        analogWrite(ServicePump, PumpSpeed);
+        analogWrite(RegenPump, PumpSpeed);
 
         for (ii=1; ii<=630; ii=ii+1)
         {
