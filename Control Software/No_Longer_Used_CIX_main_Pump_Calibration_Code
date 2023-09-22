@@ -31,6 +31,9 @@ const int OverPressure = 50; //units [psi]
 float currentFlowRate = 0;
 float CumulativeFlow =0; 
 
+const float RegenPumpCoefOffset = 7.255; //units [ml]
+const float RegenPumpCoef = 0.1225; // Bits to Flowrate Proportion. 
+
 // Constants for PID control
 const float Kp = 1.0;   // Proportional gain
 const float Ki = 0.1;   // Integral gain
@@ -601,8 +604,8 @@ void loop() {
     {
     //Local Variable Declaration
     int RegenVolumeLimit = 921; //921ml
-    int PumpSpeed = 255; // = 255/200*(known RPM for desired flow rate) in this case 19ml/min is desired and 130RPM is the known 
-    // RPM that gives apprx 19ml/min. So, 255/200*130 = 166
+    int DesiredFlowRate = 19; // units [ml/min]
+    float PumpSpeed = (DesiredFlowRate+RegenPumpCoefOffset)/RegenPumpCoef;
     float mappedFlowRate = 0;
     float TempFlow = 0;
     int ii=1;
