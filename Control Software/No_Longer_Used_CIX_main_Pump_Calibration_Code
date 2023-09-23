@@ -30,6 +30,7 @@ unsigned long currentTime;
 const int OverPressure = 50; //units [psi]
 float currentFlowRate = 0;
 float CumulativeFlow =0; 
+unsigned long elapsedTime = 0;
 
 const float RegenPumpCoefOffset = 7.255; //units [ml]
 const float RegenPumpCoef = 0.1225; // Bits to Flowrate Proportion. 
@@ -534,7 +535,7 @@ genieFrame Event;
 void CalculateTime() 
 {
     currentTime = millis(); // Get the current time
-    unsigned long elapsedTime = currentTime - startTime; // Calculate elapsed time
+    elapsedTime = currentTime - startTime; // Calculate elapsed time
     
     // Calculate hours, minutes, and seconds
     hours = elapsedTime / 3600000; // 1 hour = 3600000 milliseconds
@@ -602,14 +603,16 @@ void loop() {
 
     if(AUTOMODESTEADY)
     {
+      
     //Local Variable Declaration
-    int RegenVolumeLimit = 921; //921ml
-    int DesiredFlowRate = 19; // units [ml/min]
+    int RegenVolumeLimit = 80; //921ml
+    int DesiredFlowRate = 20; // units [ml/min]
     float PumpSpeed = (DesiredFlowRate+RegenPumpCoefOffset)/RegenPumpCoef;
     float mappedFlowRate = 0;
     float TempFlow = 0;
     int ii=1;
     int samplenum = 0;
+    
    
     SteadyRegen(); //throws valves to regen mode steady stategenie.WriteObject(GENIE_OBJ_LED, 0, 0);
     genie.WriteObject(GENIE_OBJ_LED, 1, 0);
@@ -618,30 +621,46 @@ void loop() {
     genie.WriteObject(GENIE_OBJ_LED, 4, 0);
     genie.WriteObject(GENIE_OBJ_LED, 5, 0);
     delay(1000); // gives valves some time to settle
+    
     ReadSensors(); // updates current sensor values
     CalculateBedVolumes(); //Finds Bed Volumes
+    CalculateTime(); // Reads in current time
+    
     updateDisplay(String(WaterHardness), String(EC), String(bedVolume, 4), hours, minutes, seconds); //Updates Display
 
+     while(CumulativeFlow  < RegenVolumeLimit && Pressure < OverPressure )
+        {   
         analogWrite(RegenPump, PumpSpeed);
-
-        updateDisplay(String("Out of Loop"), String(CumulativeFlow), String("Above Number is Cum. Flow"), hours, minutes, seconds); //gives flow rate value from flow
-         delay(1000);
-        genie.WriteObject(GENIE_OBJ_LED, 1, 1);
-        genie.WriteObject(GENIE_OBJ_LED, 2, 1);
-        genie.WriteObject(GENIE_OBJ_LED, 3, 1);
-        genie.WriteObject(GENIE_OBJ_LED, 4, 1);
-        genie.WriteObject(GENIE_OBJ_LED, 5, 1);
-        samplenum =0; 
-       
+        CalculateTime();
+     
+        for (ii=1; ii<=1665; ii=ii+1)
+        {
+          ReadSensors();
+          TempFlow = TempFlow + Flow;
+          samplenum = samplenum+1;
+          delay(3);
+        }
+        CalculateTime();
+        TempFlow = TempFlow/samplenum;
+        TempFlow = TempFlow/12;
+        float TempCumulative = map(TempFlow, 0, 1023, 0, 50);
         
-         updateDisplay(String("shits done"), String(CumulativeFlow), String(EC, 4), hours, minutes, seconds); //Updates Display
-    analogWrite(ServicePump,0);
-    genie.WriteObject(GENIE_OBJ_LED, 1, 0);
-    genie.WriteObject(GENIE_OBJ_LED, 2, 0);
-    genie.WriteObject(GENIE_OBJ_LED, 3, 0);
-    genie.WriteObject(GENIE_OBJ_LED, 4, 0);
-    genie.WriteObject(GENIE_OBJ_LED, 5, 0);
-  
+        CumulativeFlow = CumulativeFlow + TempFlow;
+        TempFlow = 0;
+        ii = 1;
+        samplenum=0;
+        CalculateTime();
+        
+        updateDisplay(String("Out of Loop"), String(CumulativeFlow), String("Above Number is Cum. Flow"), hours, minutes, seconds); //gives flow rate value from flow
+       
     }
+    genie.WriteObject(GENIE_OBJ_LED, 1, 1);
+    genie.WriteObject(GENIE_OBJ_LED, 2, 1);
+    genie.WriteObject(GENIE_OBJ_LED, 3, 1);
+    genie.WriteObject(GENIE_OBJ_LED, 4, 1);
+    genie.WriteObject(GENIE_OBJ_LED, 5, 1);
+    analogWrite(RegenPump,0);
+    delay(1000);
   }
+}
 }
