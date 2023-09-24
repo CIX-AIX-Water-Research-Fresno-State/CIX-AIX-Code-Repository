@@ -586,15 +586,11 @@ genie.AttachEventHandler(IXControls);
 
 }
 
-void loop() {
-
-  genie.DoEvents(); // checks for new events from the touch screen
-
-    if(AUTOMODESTEADY)
-    {
-      
-    //Local Variable Declaration
+void loop() 
+{
+   //Local Variable Declaration
     //-----------------------------------------------------------------------------------------
+  
     double RegenVolumeLimit = 921; //921ml
     double ServiceVolumeLimit = 0; //units [ml]
     double RegenDesiredFlowRate = 19; // units [ml/min] typically 19 ml/min
@@ -605,31 +601,39 @@ void loop() {
     float TempFlow = 0;
     int ii=1;
     double samplenum = 0;
+    
+    genie.DoEvents(); // checks for new events from the touch screen
+    
+    if(AUTOMODESTEADY)
+    {
+      
+ 
+
 
     while (CumulativeFlow < RegenVolumeLimit && Pressure < OverPressure)
     {
     analogWrite(RegenPump,RegenPumpSpeed);
       
-    for (ii = 1; ii <= 1000; ii=ii+1)
+    for (ii = 1; ii <= 500; ii=ii+1)
       {
         ReadSensors();
         TempFlow = TempFlow + Flow;
         samplenum = samplenum+1;
-        delay(15);
+        delay(10);
       }
      
     TempFlow = TempFlow/samplenum;
     float MappedFlow = map(TempFlow,0, 1023, 0, 250);
-    MappedFlow = MappedFlow/4.0;
+    MappedFlow = MappedFlow/12.0;
     CumulativeFlow = CumulativeFlow + MappedFlow;
     MappedFlow = 0;
     samplenum = 0;
     ii = 1;
     CalculateTime();
-    updateDisplay(String(CumulativeFlow ), String("In while."), String("While Loop"), hours, minutes, seconds);
+    updateDisplay(String(CumulativeFlow ), String("Hi Aayaat"), String("While Loop"), hours, minutes, seconds);
     }
     CalculateTime();
-    updateDisplay(String("outsideWhile"), String("outsideWhile"), String(CumulativeFlow), hours, minutes, seconds);
+    updateDisplay(String(CumulativeFlow), String("PumpOff"), String(CumulativeFlow), hours, minutes, seconds);
     analogWrite(RegenPump,0);
   }
 }
