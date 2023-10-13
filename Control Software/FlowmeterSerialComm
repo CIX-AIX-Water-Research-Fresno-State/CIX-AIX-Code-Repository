@@ -1,0 +1,112 @@
+float WaterHardness;
+float Flow;
+float EC;
+float Pressure;
+float bedVolume;
+unsigned long currentTime;
+const int OverPressure = 50; //units [psi]
+float currentFlowRate = 0;
+float CumulativeFlow =0; 
+unsigned long elapsedTime = 0;
+const double RegenVolumeLimit = 921; //921ml
+const double ServiceVolumeLimit = 921; //units [ml]
+//----------------------------------------------------------------------------------
+const double RegenDesiredFlowRate = 25; // units [ml/min] typically 19 ml/min
+//----------------------------------------------------------------------------------
+const double ServiceDesiredFlowRate = 25; //units [ml/min] typically 90-100 ml/min for lower ranges 20 - 40 check flow rate (Apprx 2ml delta so if you want 25ml type 21ml)
+
+const float RegenPumpCoefOffset = 7.255; //units [ml]
+const float RegenPumpCoef = 0.1225; // Bits to Flowrate Proportion. 
+const float ServicePumpCoefOffset = 11.51; // 11.51 ml/min
+const float ServicePumpCoef = 2.818 ; // 2.84 +- 0.02209
+float TempFlow = 0;
+
+// Constants for PID control
+const float Kp = 1.0;   // Proportional gain
+const float Ki = 0.1;   // Integral gain
+const float Kd = 0.01;  // Derivative gain
+
+// Desired flow rate in ml per minute (adjust as needed)
+const float desiredFlowRate = 19.0;
+
+// Variables for PID control
+float previousError = 0;
+float integral = 0;
+
+
+
+
+//Sensor pin assignments
+
+const int WHpin = A0;
+const int ECpin = A1;
+const int FlowMeterPin = A2;
+const int PressurePin = A3;
+const int RegenPump = 5;
+const int ServicePump = 6;
+
+
+
+//global variables
+float flow_value=0;
+float cumulativeflow = 0.0;
+float previousbedvolume = 0.0;
+unsigned long startTime = 0;
+const unsigned long updateInterval = 15000;
+unsigned long previousMillis = 0;
+bool StartStopState = false;
+int ButtonState0 = 0;
+unsigned long hours = 0;
+unsigned long minutes = 0;
+unsigned long seconds = 0;
+//valve values
+const int VALVE1 = 1;
+const int VALVE2 = 2;
+const int VALVE3 = 3;
+const int VALVE4 = 4;
+const int VALVE5 = 5;
+const int VALVE6 = 6;
+const int VALVE7 = 7;
+const int VALVE8 = 8;
+const int VALVE9 = 9;
+const int VALVE10 = 10;     //Added below the IX column 09.27.2022
+
+unsigned int APOS = 355;         //Valve A position
+unsigned int BPOS = -50;        //Valve B position
+const int ValveStagger = 1500;     //Delay between valve actuation to lessen current draw
+
+int modeselect = 0;
+int LatchSHFT = HIGH;
+int LatchRNS = HIGH;
+int LatchREG = HIGH;
+int LatchSRV = HIGH;
+int LatchPURGE = HIGH;
+int LatchAUTO = HIGH;
+
+int LatchMastPower = HIGH;
+
+//Auto Mode indicator
+bool AUTOMODETRANS = false;
+bool AUTOMODESTEADY = false;
+
+void setup() {
+ Serial.begin(9600);
+
+}
+
+void loop() {
+    float RegenPumpSpeed = (RegenDesiredFlowRate+RegenPumpCoefOffset)/RegenPumpCoef;
+    float ServicePumpSpeed = (ServiceDesiredFlowRate+ServicePumpCoefOffset)/ServicePumpCoef;
+    analogWrite(ServicePump,ServicePumpSpeed);
+    int ii =1;
+    float samplenum=1;
+    
+    
+    for (ii = 1; ii <= 5000; ii = ii+1) 
+    {
+     Flow = analogRead(FlowMeterPin);
+     delay(1000);
+     Serial.println(Flow);
+    }
+
+}
