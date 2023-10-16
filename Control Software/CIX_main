@@ -1,7 +1,7 @@
 //Armando Correa
 //Miguel Sanchez
 //Walter Mizuno
-//With some contribution from Kimberly K Kardashian
+//With some older contribution from Kimberly K Kardashian
 
 //Last Edited: 9/17/23
 //Code if for the 4D display tocuh screen that will control the servos as well as displaying multiple values such as
@@ -27,7 +27,7 @@ float EC;
 float Pressure;
 float bedVolume;
 unsigned long currentTime;
-const int OverPressure = 50; //units [psi]
+const int OverPressure = 790; //units bits
 float currentFlowRate = 0;
 float CumulativeFlow =0; 
 
@@ -108,7 +108,7 @@ void SteadyService()
   delay(ValveStagger);
   HCPCA9685.Servo(VALVE2, BPOS);
   delay(ValveStagger);
-  HCPCA9685.Servo(VALVE3, BPOS);
+  HCPCA9685.Servo(VALVE3, APOS);
   delay(ValveStagger);
   HCPCA9685.Servo(VALVE4, BPOS);
   delay(ValveStagger);
@@ -132,7 +132,7 @@ void SteadyRinse()
               delay(ValveStagger);
               HCPCA9685.Servo(VALVE2, BPOS);
               delay(ValveStagger);
-              HCPCA9685.Servo(VALVE3, BPOS);
+              HCPCA9685.Servo(VALVE3, APOS);
               delay(ValveStagger);
               HCPCA9685.Servo(VALVE4, APOS);
               delay(ValveStagger);
@@ -157,7 +157,7 @@ void SteadyRegen()
               delay(ValveStagger);
               HCPCA9685.Servo(VALVE2, BPOS);
               delay(ValveStagger);
-              HCPCA9685.Servo(VALVE3, BPOS);
+              HCPCA9685.Servo(VALVE3, APOS);
               delay(ValveStagger);
               HCPCA9685.Servo(VALVE4, APOS);
               delay(ValveStagger);
@@ -205,7 +205,7 @@ HCPCA9685.Servo(VALVE1, BPOS);
 delay(ValveStagger);
 HCPCA9685.Servo(VALVE2, BPOS);
 delay(ValveStagger);
-HCPCA9685.Servo(VALVE3, BPOS);  //go to drain
+HCPCA9685.Servo(VALVE3, APOS);  //go to drain
 delay(ValveStagger);
 HCPCA9685.Servo(VALVE4, BPOS);
 delay(ValveStagger);
@@ -225,7 +225,7 @@ genie.WriteObject(GENIE_OBJ_LED, 5, 0);
 
 void TransRinse()
 {
-           HCPCA9685.Servo(VALVE1, BPOS);  //Reset to APOS
+           HCPCA9685.Servo(VALVE1, APOS);  //Reset to APOS
               delay(ValveStagger);
               HCPCA9685.Servo(VALVE2, BPOS);
               delay(ValveStagger);
@@ -235,7 +235,7 @@ void TransRinse()
               delay(ValveStagger);
               HCPCA9685.Servo(VALVE5, APOS);  
               delay(ValveStagger);
-              HCPCA9685.Servo(VALVE6, APOS);
+              HCPCA9685.Servo(VALVE6, BPOS);
               delay(ValveStagger);
               startTime = millis();
               StartStopState = true;
@@ -271,13 +271,8 @@ void TransRegen()
               genie.WriteObject(GENIE_OBJ_LED, 5, 0);
 }
 
-void RegenPumpSequence() {
- 
-      
-}
-
 void CalculateBedVolumes(){
-    float flowRate  = Flow * 0.03; //x
+    float flowRate  = Flow * 0.03; //not used
     float bedVolume = (flowRate / (4 * 1000) / 530.1438) + previousbedvolume;
     previousbedvolume = bedVolume;
     
@@ -290,59 +285,21 @@ void ReadSensors(){
   Pressure = analogRead(PressurePin);
 }
 
-float RegenPID(float currentFlowRate)
- {
-    
-    int UpperFlowLimit = 220; //units [ml/min]
-    int impulseSignal = 100; // RegenPump 45 RPM
-    analogWrite(RegenPump,impulseSignal);
-    delay(2000);
-    ReadSensors();
-    float mappedFlowRate = map(Flow, 0, 1023, 0, UpperFlowLimit); //maps analog Flowmeter Signal from 0 - 1023 to 0 ml/min - 220 ml/min enables 0.215ml/min resolution
-
-
-  // Calculate the error
-  float error = desiredFlowRate - mappedFlowRate;
-
-  // Compute the integral term
-  integral += error;
-
-  // Compute the derivative term
-  float derivative = error - previousError;
-
-  // Calculate the PID output
-  float output = (Kp * error) + (Ki * integral) + (Kd * derivative);
-
-  // Update previous error for the next iteration
-  previousError = error;
-
-  return output;
-}  
-
-
-void SteadyAutoMode()
-{
-
-}
-
-
-
-void TransAuto(){
-
-}
-
-
-
-
 void IXControls()
 {
 genieFrame Event;
-  if (genie.DequeueEvent(&Event)) {
-    if (Event.reportObject.cmd == GENIE_REPORT_EVENT) {
-      if(Event.reportObject.object == GENIE_OBJ_4DBUTTON){
-        if (Event.reportObject.index == 0){
-          ButtonState0 = genie.GetEventData(&Event);
-          if (ButtonState0 == 0){
+  if (genie.DequeueEvent(&Event)) 
+  {
+    if (Event.reportObject.cmd == GENIE_REPORT_EVENT) 
+    {
+      if(Event.reportObject.object == GENIE_OBJ_4DBUTTON) //starts checking if buttons have been pressed or not
+      {
+        if (Event.reportObject.index == 0) //checks master power button
+        {
+          ButtonState0 = genie.GetEventData(&Event); 
+
+          if (ButtonState0 == 0)
+          {
             LatchSHFT = HIGH;
             LatchRNS = HIGH;
             LatchREG = HIGH;
@@ -360,23 +317,33 @@ genieFrame Event;
             StartStopState = false;
 
           }
-          else if (ButtonState0 == 1){
+
+          else if (ButtonState0 == 1)
+          {
             LatchMastPower = LOW;
             genie.WriteObject(GENIE_OBJ_ROTARYSW, 0x00, 0);
             genie.WriteObject(GENIE_OBJ_LED, 0, 1);
           }
         }
 
-        if(Event.reportObject.index == 1){
+        if(Event.reportObject.index == 1) // checks Steady/Transient Slider
+        {
           int ButtonState1 = genie.GetEventData(&Event);
-          if (ButtonState1 == 0){
+
+          if (ButtonState1 == 0)
+          {
             LatchSHFT = HIGH; //slider is set to steady state
           }
-          else if (ButtonState1 == 1){
+
+          else if (ButtonState1 == 1)
+          {
             LatchSHFT = LOW; //slider is set to tansient
           }
+
         }
-        if(Event.reportObject.index == 2){
+
+        if(Event.reportObject.index == 2) // Checks Stop Button
+        {
             StartStopState = false;
             genie.WriteObject(GENIE_OBJ_LED, 0, 1);
             genie.WriteObject(GENIE_OBJ_LED, 1, 0);
@@ -384,40 +351,58 @@ genieFrame Event;
             genie.WriteObject(GENIE_OBJ_LED, 3, 0);
             genie.WriteObject(GENIE_OBJ_LED, 4, 0);
             genie.WriteObject(GENIE_OBJ_LED, 5, 0);
+            genie.WriteObject(GENIE_OBJ_USER_LED,0,0); // turns off Start Button LED 
+            genie.WriteObject(GENIE_OBJ_USER_LED,1,1); // turns on Stop Button LED
         }
-        if(Event.reportObject.index == 3){
+
+        if(Event.reportObject.index == 3) //Checks Start Button
+        {
 
             //Steady State-------------------------------------------------------------------------------------------------------------
 
             //Rinse Mode
-            if(LatchSHFT == HIGH && LatchRNS == LOW && LatchMastPower == LOW && StartStopState == false){
+            if(LatchSHFT == HIGH && LatchRNS == LOW && LatchMastPower == LOW && StartStopState == false)
+            {
+            genie.WriteObject(GENIE_OBJ_USER_LED,0,1); // turns on Start Button LED 
+            genie.WriteObject(GENIE_OBJ_USER_LED,1,0); // turns off Stop Button LED
             SteadyRinse();
             }
             
             //Regen mode
-            if(LatchSHFT == HIGH && LatchREG == LOW && LatchMastPower == LOW && StartStopState == false){
+            if(LatchSHFT == HIGH && LatchREG == LOW && LatchMastPower == LOW && StartStopState == false)
+            {
+            genie.WriteObject(GENIE_OBJ_USER_LED,0,1); // turns on Start Button LED 
+            genie.WriteObject(GENIE_OBJ_USER_LED,1,0); // turns off Stop Button LED
             SteadyRegen();
             }
 
             //Service Mode
-            if(LatchSHFT == HIGH && LatchSRV == LOW && LatchMastPower == LOW && StartStopState == false){
+            if(LatchSHFT == HIGH && LatchSRV == LOW && LatchMastPower == LOW && StartStopState == false)
+            {
+            genie.WriteObject(GENIE_OBJ_USER_LED,0,1); // turns on Start Button LED 
+            genie.WriteObject(GENIE_OBJ_USER_LED,1,0); // turns off Stop Button LED
             SteadyService();
             }
 
             //Purge Mode
-            if(LatchSHFT == HIGH && LatchPURGE == LOW && LatchMastPower == LOW && StartStopState == false){
+            if(LatchSHFT == HIGH && LatchPURGE == LOW && LatchMastPower == LOW && StartStopState == false)
+            {
+            genie.WriteObject(GENIE_OBJ_USER_LED,0,1); // turns on Start Button LED 
+            genie.WriteObject(GENIE_OBJ_USER_LED,1,0); // turns off Stop Button LED
             PurgeMode();
             }
 
             //Auto Mode
-            if(LatchSHFT == HIGH && LatchAUTO == LOW && LatchMastPower == LOW && StartStopState == false){
+            if(LatchSHFT == HIGH && LatchAUTO == LOW && LatchMastPower == LOW && StartStopState == false)
+            {
               //do somethings to determine when to switch between modes.
               startTime = millis();
               StartStopState = true;
               genie.WriteObject(GENIE_OBJ_LED, 5, 1);
               AUTOMODESTEADY = true;
             }
-            else{
+            else
+            {
               AUTOMODESTEADY = false;
             }
 
@@ -425,40 +410,57 @@ genieFrame Event;
             //Transient-------------------------------------------------------------------------------------------------------------
 
             //Rinse Mode
-            if(LatchSHFT == LOW && LatchRNS == LOW && LatchMastPower == LOW && StartStopState == false){
-              TransRinse();
+            if(LatchSHFT == LOW && LatchRNS == LOW && LatchMastPower == LOW && StartStopState == false)
+            {
+            genie.WriteObject(GENIE_OBJ_USER_LED,0,1); // turns on Start Button LED 
+            genie.WriteObject(GENIE_OBJ_USER_LED,1,0); // turns off Stop Button LED
+            TransRinse();
             }
 
             //Regen Mode
-            if(LatchSHFT == LOW && LatchREG == LOW && LatchMastPower == LOW && StartStopState == false){
-              TransRegen();
+            if(LatchSHFT == LOW && LatchREG == LOW && LatchMastPower == LOW && StartStopState == false)
+            {
+            genie.WriteObject(GENIE_OBJ_USER_LED,0,1); // turns on Start Button LED 
+            genie.WriteObject(GENIE_OBJ_USER_LED,1,0); // turns off Stop Button LED
+            TransRegen();
             }
 
             //Service Mode
-            if(LatchSHFT == LOW && LatchSRV == LOW && LatchMastPower == LOW && StartStopState == false){
-              TransService();
+            if(LatchSHFT == LOW && LatchSRV == LOW && LatchMastPower == LOW && StartStopState == false)
+            {
+            genie.WriteObject(GENIE_OBJ_USER_LED,0,1); // turns on Start Button LED 
+            genie.WriteObject(GENIE_OBJ_USER_LED,1,0); // turns off Stop Button LED
+            TransService();
             }
 
             //Purge Mode
-            if(LatchSHFT == LOW && LatchPURGE == LOW && LatchMastPower == LOW && StartStopState == false){
-              PurgeMode();
+            if(LatchSHFT == LOW && LatchPURGE == LOW && LatchMastPower == LOW && StartStopState == false)
+            {
+             genie.WriteObject(GENIE_OBJ_USER_LED,0,1); // turns on Start Button LED 
+             genie.WriteObject(GENIE_OBJ_USER_LED,1,0); // turns off Stop Button LED
+             PurgeMode();
             }
 
             //Auto Mode
-            if(LatchSHFT == LOW && LatchAUTO == LOW && LatchMastPower == LOW && StartStopState == false){
+            if(LatchSHFT == LOW && LatchAUTO == LOW && LatchMastPower == LOW && StartStopState == false)
+            {
               startTime = millis();
               StartStopState = true;
               genie.WriteObject(GENIE_OBJ_LED, 5, 1);
               AUTOMODETRANS = true;
    
             }
-            else{
+            else
+            {
               AUTOMODETRANS = false;
             }
         }
       }
-      if(Event.reportObject.object == GENIE_OBJ_ROTARYSW){
-       if(Event.reportObject.index == 0x00){
+
+      if(Event.reportObject.object == GENIE_OBJ_ROTARYSW)
+      {
+       if(Event.reportObject.index == 0x00)
+       {
           if(Event.reportObject.data_lsb == 0)
             {
               if(LatchMastPower == LOW){
@@ -542,36 +544,36 @@ void CalculateTime()
 
 }
 
+
+
 void updateDisplay(String hardnessStr, String ecStr, String bedVolumeStr, unsigned long hours, unsigned long minutes, unsigned long seconds) 
 {
 genie.WriteStr(2, String(hours) + ":" + (minutes < 10 ? "0" : "") + String(minutes) + ":" + (seconds < 10 ? "0" : "" ) + String(seconds));
 genie.WriteStr(3, hardnessStr);
 genie.WriteStr(4, ecStr);
 genie.WriteStr(5, flow_value);
-genie.WriteStr(6, "SomeValue"); // 
+genie.WriteStr(6, Pressure); // 
 
 previousMillis = currentTime;
 }
 
 
-void setup() {
+void setup() 
+{
+  
 Serial.begin(115200);
 genie.Begin(Serial);
-
-  /* Initialise the library and set it to 'servo mode' */
-  HCPCA9685.Init(SERVO_MODE);
-
-  /* Wake the device up */
-  HCPCA9685.Sleep(false);
-
 pinMode(RESETLINE, 1);
 digitalWrite(RESETLINE, 1);
 delay(100);
 digitalWrite(RESETLINE, 0);
 delay(2000);
 
+HCPCA9685.Init(SERVO_MODE);
+HCPCA9685.Sleep(false);
 
 //Pin Declaration for Auto Control
+
 pinMode(RegenPump,OUTPUT);
 pinMode(ServicePump,OUTPUT);
 
@@ -579,90 +581,24 @@ genie.AttachEventHandler(IXControls);
 
 }
 
-void loop() {
-
+void loop() 
+{
+ 
   genie.DoEvents(); // checks for new events from the touch screen
-
-  if (StartStopState){
-
+  
+  if (StartStopState)
+  {
     CalculateTime();
-
 
     if(currentTime - previousMillis >= updateInterval)
     {
-
     ReadSensors();
-    CalculateBedVolumes();
-    updateDisplay(String(WaterHardness), String(EC), String(bedVolume, 4), hours, minutes, seconds);
-
-    }
-
-    if(AUTOMODESTEADY)
+    if (Pressure > OverPressure) 
     {
-    //Local Variable Declaration
-    int RegenVolumeLimit = 921; //921ml
-    int PumpSpeed = 255; // = 255/200*(known RPM for desired flow rate) in this case 19ml/min is desired and 130RPM is the known 
-    // RPM that gives apprx 19ml/min. So, 255/200*130 = 166
-    float mappedFlowRate = 0;
-    float TempFlow = 0;
-    int ii=1;
-    int samplenum = 0;
-   
-    SteadyRegen(); //throws valves to regen mode steady stategenie.WriteObject(GENIE_OBJ_LED, 0, 0);
-    genie.WriteObject(GENIE_OBJ_LED, 1, 0);
-    genie.WriteObject(GENIE_OBJ_LED, 2, 1);
-    genie.WriteObject(GENIE_OBJ_LED, 3, 1);
-    genie.WriteObject(GENIE_OBJ_LED, 4, 0);
-    genie.WriteObject(GENIE_OBJ_LED, 5, 0);
-    delay(1000); // gives valves some time to settle
-    ReadSensors(); // updates current sensor values
-    CalculateBedVolumes(); //Finds Bed Volumes
-    updateDisplay(String(WaterHardness), String(EC), String(bedVolume, 4), hours, minutes, seconds); //Updates Display
-
-        while(CumulativeFlow  < RegenVolumeLimit && Pressure < OverPressure )
-        {   
-        analogWrite(RegenPump, PumpSpeed);
-
-        for (ii=1; ii<=630; ii=ii+1)
-        {
-          
-          ReadSensors();
-          CalculateTime();
-          TempFlow = TempFlow + Flow;
-          samplenum = samplenum+1;
-          updateDisplay(String(samplenum), String(TempFlow), String("placeholder"), hours, minutes, seconds);
-          delay(3);
-        }
-
-        ii = 1;
-        TempFlow = (TempFlow/samplenum); //takes mean sample from flow and divides by 4 to get flowrate for 15 seconds
-        
-        float TempCumulative = map(TempFlow, 0, 1023, 0, 250);
-
-      
-
-        CumulativeFlow = CumulativeFlow + TempCumulative;
-        TempFlow = 0;
-        TempCumulative =0;
-       
-        updateDisplay(String("Out of Loop"), String(CumulativeFlow), String("Above Number is Cum. Flow"), hours, minutes, seconds); //gives flow rate value from flow
-         delay(1000);
-        genie.WriteObject(GENIE_OBJ_LED, 1, 1);
-        genie.WriteObject(GENIE_OBJ_LED, 2, 1);
-        genie.WriteObject(GENIE_OBJ_LED, 3, 1);
-        genie.WriteObject(GENIE_OBJ_LED, 4, 1);
-        genie.WriteObject(GENIE_OBJ_LED, 5, 1);
-        samplenum =0; 
-       
-        }
-         updateDisplay(String("shits done"), String(CumulativeFlow), String(EC, 4), hours, minutes, seconds); //Updates Display
-    analogWrite(ServicePump,0);
-    genie.WriteObject(GENIE_OBJ_LED, 1, 0);
-    genie.WriteObject(GENIE_OBJ_LED, 2, 0);
-    genie.WriteObject(GENIE_OBJ_LED, 3, 0);
-    genie.WriteObject(GENIE_OBJ_LED, 4, 0);
-    genie.WriteObject(GENIE_OBJ_LED, 5, 0);
-  
+      genie.WriteObject(GENIE_OBJ_LED, 9, 1); // turns on and latches over pressure switch
+    }
+    CalculateBedVolumes();
+    updateDisplay(String(WaterHardness), String(Pressure), String(bedVolume, 4), hours, minutes, seconds);
     }
   }
 }
