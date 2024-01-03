@@ -8,3 +8,6 @@ Walter Mizuno and William Wright.
 If you have any questions about how to use this repository, please reach out to Armando Correa @ acorrea14@mail.fresnostate.edu
 
 Happy Collaborating!
+
+P.S. Here is a link to download files from here!
+https://download-directory.github.io/
