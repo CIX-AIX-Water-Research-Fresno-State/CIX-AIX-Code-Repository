@@ -61,7 +61,7 @@ float EC;
 float Pressure;
 unsigned long currentTime;
 unsigned long startTime = 0;
-const unsigned long updateInterval = 5000; // 15 seconds = 15000 // 5 seconds = 5000 
+const unsigned long updateInterval = 5000; // 15 seconds = 15000 // 5 seconds = 5000 // 1000 = 1 second
 unsigned long previousMillis = 0;
 bool StartStopState = HIGH;
 int ButtonState0 = 0;
@@ -142,6 +142,7 @@ void SteadyService() {
   delay(ValveStagger);
   HCPCA9685.Servo(VALVE6, APOS);
   delay(ValveStagger);
+  genie.WriteStr(ConductivityString, "Here");
   startTime = millis();
 }
 
@@ -165,6 +166,7 @@ void SteadyRinse() {
   delay(ValveStagger);
   HCPCA9685.Servo(VALVE6, BPOS);
   delay(ValveStagger);
+genie.WriteStr(ConductivityString, "There");
   //starts counting from when the button is pressed to begin displaying values
   startTime = millis();
 }
@@ -190,6 +192,7 @@ void SteadyRegen() {
   HCPCA9685.Servo(VALVE6, APOS);
   delay(ValveStagger);
   delay(100);
+  genie.WriteStr(ConductivityString, "Everywhere");
   startTime = millis();
 }
 
@@ -338,6 +341,7 @@ void IXControls(void) {
     genie.WriteObject(GENIE_OBJ_USER_LED, ServiceLED, 0);  //Service LED
     genie.WriteObject(GENIE_OBJ_USER_LED, PurgeLED, 0);    //Purge Air LED
     genie.WriteObject(GENIE_OBJ_USER_LED, AutoLED, 0);     //Automatic LED
+    RunVolume = 0; //resets run volume 
   }
 
   if (genie.EventIs(&Event, GENIE_REPORT_EVENT, GENIE_OBJ_4DBUTTON, StartButton))  //Checks Start Button
@@ -455,19 +459,29 @@ void CalculateTime() {
 
 void ReadSensors() {
   WaterHardness = analogRead(WHpin);
-  Flow = analogRead(FlowMeterPin)*VoltsPerBit*50*0.0844*0.0018; //*50 is mL/1V -> 0.0844 = 1/12 which is one sample every 5 seconds -> 0.0018 is 1bed Volume/552mL 
+  Flow = analogRead(FlowMeterPin)*VoltsPerBit*50; //*50 is mL/1V*min units end up being mL/min
   RunVolume = RunVolume + Flow; // Run Volume is in Bed Volumes ~ 551mL 
   EC = analogRead(ECpin);
   Pressure = analogRead(PressurePin);
 }
 
 void WaterHardnessAuto() {
-  float limit = 1.25; //volt
+  float limit = 0.15; //volt
+  int numSamples = 1000;
+  int sumOfSamples = 0;  // Variable to hold the sum of all samples
+  // Take 1000 samples within 5 seconds and sum them up
+  for (int i = 0; i < numSamples; i++) {
+    int sensorValue = analogRead(WaterHardness);  // Read the analog input
+    sumOfSamples += sensorValue;  // Add the sensor value to the sum
+  }
+
+  float average = (float)sumOfSamples / numSamples;
+  WaterHardness = average;
   float difference = abs(OldWaterHardness - WaterHardness)*VoltsPerBit; // VoltsPerBit = 0.005
   OldWaterHardness = WaterHardness;
   if (difference >= limit) {
     WaterHardnessCounter = WaterHardnessCounter + 1;
-    if (WaterHardnessCounter > 4) {
+    if (WaterHardnessCounter > 5) {
       genie.WriteObject(GENIE_OBJ_LED, EndOfServiceLED, 1);
       genie.WriteStr(IonsExchString,  "WH " + String(hours) + ":" + (minutes < 10 ? "0" : "") + String(minutes) + ":" + (seconds < 10 ? "0" : "") + String(seconds));
     }
@@ -482,10 +496,10 @@ void OverPressureDetector() {
   }
 }
 
-void updateDisplay(unsigned long hours, unsigned long minutes, unsigned long seconds, String hardnessStr, String ecStr, String BedVolumeStr, String PressureStr) {
+void updateDisplay(unsigned long hours, unsigned long minutes, unsigned long seconds, String hardnessStr, String BedVolumeStr, String PressureStr) {
   genie.WriteStr(ElapsedTimeString, String(hours) + ":" + (minutes < 10 ? "0" : "") + String(minutes) + ":" + (seconds < 10 ? "0" : "") + String(seconds));
   genie.WriteStr(WaterHardnessString, hardnessStr + " V");
-  genie.WriteStr(ConductivityString, ecStr);      //will be used for EC eventually but is used for pressure
+     //will be used for EC eventually but is used for pressure
   genie.WriteStr(BedVolumeString, BedVolumeStr);  //will become bedvolumes 94 mL/min
   previousMillis = currentTime;
 }
@@ -499,7 +513,7 @@ void loop() {
     if (currentTime - previousMillis >= updateInterval) {
       ReadSensors();
       WaterHardnessAuto();
-      updateDisplay(hours, minutes, seconds, String(WaterHardness * VoltsPerBit), String("me"), String(RunVolume), "TBD");
+      updateDisplay(hours, minutes, seconds, String(WaterHardness * VoltsPerBit),  String(((RunVolume*((hours*60)+(minutes)))/551)), "TBD");
       OverPressureDetector();
     }
   }
