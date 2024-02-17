@@ -1,0 +1,1030 @@
+﻿Version     0.0
+Platform    Gen4-uLCD-70DCT-CLB-L
+PlatRes     480x800
+Depends
+end
+Options
+    Genie
+    Speed                        200000
+    Checksum                     No
+    ResponseSize                 2
+    Multidrop                    No
+    Destination                  1
+    DestBank                     0
+    MainForm                     0
+    SndBuf                       0
+    ButtonDisable                No
+    SignedDigits                 No
+    MaxString                    75
+    ComPort                      0
+    ComTX1pinIdx                 0
+    ComRX1pinIdx                 0
+    FileSystem                   FATfs
+    FlashEraseOption             Optimal
+    SPIenable                    0
+    SPIsdo                       3
+    SPIsdi                       2
+    SPIsck                       1
+    ForceProgramFlash            No
+    PixxiuSDSpeed                0
+    FlashForceLT16MB             No
+end
+Form
+    Name                         Form0
+    Alias                        Form0
+    Bgtype                       Color
+    Color                        BLACK
+    Image                        (None)
+    Source.Height                0
+    Source.Left                  0
+    Source.Top                   0
+    Source.Width                 0
+    OnActivate                   ''
+    OnCreate                     ''
+    OnRepeat                     ''
+    OnTouchMoving                ''
+    OnTouchPressed               ''
+    OnTouchReleased              ''
+end
+4Dbutton
+    Name                         4Dbutton0
+    Alias                        'Master Power Switch'
+    Height                       64
+    Left                         16
+    Matrix                       -1
+    Momentary                    No
+    Size                         64x64
+    Style                        Red
+    Top                          96
+    Type                         Rocker01
+    Width                        64
+    OnChanged                    'Report Message'
+end
+4Dbutton
+    Name                         4Dbutton1
+    Alias                        'Slider Switch'
+    Height                       48
+    Left                         340
+    Matrix                       -1
+    Momentary                    No
+    Size                         48x48
+    Style                        Red
+    Top                          104
+    Type                         Slider01
+    Width                        48
+    OnChanged                    'Report Message'
+end
+Image
+    Name                         Image0
+    Alias                        Image0
+    Height                       67
+    Image                        'Water Research Group Logo v1.0.png'
+    Left                         194
+    Source.Height                85
+    Source.Left                  0
+    Source.Top                   0
+    Source.Width                 328
+    Top                          16
+    Width                        390
+    OnTouchMoving                ''
+    OnTouchPressed               ''
+    OnTouchReleased              ''
+end
+StaticText
+    Name                         Statictext0
+    Alias                        Statictext0
+    Alignment                    Left
+    AutoSize                     Yes
+    Caption                      Master
+    Color                        BLACK
+    Font.Color                   clYellow
+    Font.Effects                 []
+    Font.Name                    Tahoma
+    Font.Size                    15
+    Font.Style                   []
+    Height                       24
+    Left                         82
+    Top                          95
+    Transparent                  Yes
+    Width                        60
+    WordWrap                     Yes
+end
+StaticText
+    Name                         Statictext1
+    Alias                        Statictext1
+    Alignment                    Left
+    AutoSize                     Yes
+    Caption                      Power
+    Color                        BLACK
+    Font.Color                   clYellow
+    Font.Effects                 []
+    Font.Name                    Tahoma
+    Font.Size                    15
+    Font.Style                   []
+    Height                       24
+    Left                         82
+    Top                          120
+    Transparent                  Yes
+    Width                        55
+    WordWrap                     Yes
+end
+StaticText
+    Name                         Statictext2
+    Alias                        Statictext2
+    Alignment                    Left
+    AutoSize                     Yes
+    Caption                      Transient
+    Color                        BLACK
+    Font.Color                   clYellow
+    Font.Effects                 []
+    Font.Name                    Tahoma
+    Font.Size                    13
+    Font.Style                   []
+    Height                       21
+    Left                         252
+    Top                          116
+    Transparent                  Yes
+    Width                        70
+    WordWrap                     Yes
+end
+StaticText
+    Name                         Statictext3
+    Alias                        Statictext3
+    Alignment                    Left
+    AutoSize                     Yes
+    Caption                      'Steady State'
+    Color                        BLACK
+    Font.Color                   clYellow
+    Font.Effects                 []
+    Font.Name                    Tahoma
+    Font.Size                    12
+    Font.Style                   []
+    Height                       19
+    Left                         404
+    Top                          116
+    Transparent                  Yes
+    Width                        87
+    WordWrap                     No
+end
+StaticText
+    Name                         Statictext4
+    Alias                        Statictext4
+    Alignment                    Left
+    AutoSize                     Yes
+    Caption                      'CIX 2'
+    Color                        BLACK
+    Font.Color                   WHITE
+    Font.Effects                 []
+    Font.Name                    Tahoma
+    Font.Size                    20
+    Font.Style                   [Bold,Italic]
+    Height                       33
+    Left                         688
+    Top                          8
+    Transparent                  Yes
+    Width                        80
+    WordWrap                     No
+end
+4Dbutton
+    Name                         4Dbutton2
+    Alias                        Start
+    Height                       64
+    Left                         720
+    Matrix                       -1
+    Momentary                    Yes
+    Size                         64x64
+    Style                        Green
+    Top                          108
+    Type                         Button01
+    Width                        64
+    OnChanged                    'Report Message'
+end
+UserLed
+    Name                         Userled0
+    Alias                        startButtonLED
+    Active                       No
+    Bevel.BorderColor            clBtnFace
+    Bevel.BorderWidth            0
+    Bevel.InnerColor             clBtnFace
+    Bevel.InnerHighlight         clLime
+    Bevel.InnerOutline           None
+    Bevel.InnerShadow            0x005100
+    Bevel.InnerSpace             1
+    Bevel.InnerStyle             None
+    Bevel.Innerwidth             1
+    Bevel.OuterColor             clBtnFace
+    Bevel.OuterHighlight         clBtnHighlight
+    Bevel.OuterOutline           Outer
+    Bevel.OuterShadow            clBtnShadow
+    Bevel.OuterSpace             0
+    Bevel.OuterStyle             Raised
+    Bevel.Outerwidth             1
+    Bevel.Visible                Yes
+    Height                       20
+    Left                         684
+    OutlineColor                 BLACK
+    OutlineWidth                 0
+    PaletteEx.High1              clLime
+    PaletteEx.High2              clLime
+    PaletteEx.Low1               BLACK
+    PaletteEx.Low2               BLACK
+    Top                          132
+    Width                        30
+    OnChanged                    ''
+end
+StaticText
+    Name                         Statictext5
+    Alias                        Statictext5
+    Alignment                    Left
+    AutoSize                     Yes
+    Caption                      START
+    Color                        BLACK
+    Font.Color                   clYellow
+    Font.Effects                 []
+    Font.Name                    Tahoma
+    Font.Size                    14
+    Font.Style                   []
+    Height                       23
+    Left                         724
+    Top                          180
+    Transparent                  Yes
+    Width                        56
+    WordWrap                     Yes
+end
+4Dbutton
+    Name                         4Dbutton3
+    Alias                        'Stop Button'
+    Height                       64
+    Left                         720
+    Matrix                       -1
+    Momentary                    Yes
+    Size                         64x64
+    Style                        Red
+    Top                          356
+    Type                         Button01
+    Width                        64
+    OnChanged                    'Report Message'
+end
+StaticText
+    Name                         Statictext6
+    Alias                        STOP
+    Alignment                    Left
+    AutoSize                     Yes
+    Caption                      STOP
+    Color                        BLACK
+    Font.Color                   clYellow
+    Font.Effects                 []
+    Font.Name                    Tahoma
+    Font.Size                    14
+    Font.Style                   []
+    Height                       23
+    Left                         728
+    Top                          428
+    Transparent                  Yes
+    Width                        45
+    WordWrap                     No
+end
+UserLed
+    Name                         Userled1
+    Alias                        stopButtonLED
+    Active                       No
+    Bevel.BorderColor            clBtnFace
+    Bevel.BorderWidth            0
+    Bevel.InnerColor             clBtnFace
+    Bevel.InnerHighlight         clLime
+    Bevel.InnerOutline           None
+    Bevel.InnerShadow            0x005100
+    Bevel.InnerSpace             1
+    Bevel.InnerStyle             None
+    Bevel.Innerwidth             1
+    Bevel.OuterColor             clBtnFace
+    Bevel.OuterHighlight         clBtnHighlight
+    Bevel.OuterOutline           Outer
+    Bevel.OuterShadow            clBtnShadow
+    Bevel.OuterSpace             0
+    Bevel.OuterStyle             Raised
+    Bevel.Outerwidth             1
+    Bevel.Visible                Yes
+    Height                       20
+    Left                         684
+    OutlineColor                 BLACK
+    OutlineWidth                 0
+    PaletteEx.High1              clRed
+    PaletteEx.High2              clRed
+    PaletteEx.Low1               BLACK
+    PaletteEx.Low2               BLACK
+    Top                          380
+    Width                        30
+    OnChanged                    ''
+end
+Led
+    Name                         Led0
+    Alias                        Led0
+    Active                       No
+    Caption                      Off
+    Color                        BLACK
+    Font.Color                   clWhite
+    Font.Effects                 []
+    Font.Name                    Arial
+    Font.Size                    12
+    Font.Style                   []
+    Glyphs                       (None)
+    Height                       25
+    Layout                       Left
+    LedType                      LargeRect
+    Left                         1
+    Palette.High                 clRed
+    Palette.Low                  BLACK
+    Spacing                      5
+    Top                          180
+    Width                        110
+    OnChanged                    ''
+end
+Led
+    Name                         Led1
+    Alias                        Led1
+    Active                       No
+    Caption                      Rinse
+    Color                        BLACK
+    Font.Color                   clWhite
+    Font.Effects                 []
+    Font.Name                    Arial
+    Font.Size                    12
+    Font.Style                   []
+    Glyphs                       (None)
+    Height                       25
+    Layout                       Left
+    LedType                      LargeRect
+    Left                         10
+    Palette.High                 clAqua
+    Palette.Low                  BLACK
+    Spacing                      5
+    Top                          200
+    Width                        110
+    OnChanged                    ''
+end
+Led
+    Name                         Led2
+    Alias                        Led2
+    Active                       No
+    Caption                      Regen
+    Color                        BLACK
+    Font.Color                   clWhite
+    Font.Effects                 []
+    Font.Name                    Arial
+    Font.Size                    12
+    Font.Style                   []
+    Glyphs                       (None)
+    Height                       25
+    Layout                       Left
+    LedType                      LargeRect
+    Left                         13
+    Palette.High                 clYellow
+    Palette.Low                  BLACK
+    Spacing                      5
+    Top                          220
+    Width                        110
+    OnChanged                    ''
+end
+Led
+    Name                         Led3
+    Alias                        Led3
+    Active                       No
+    Caption                      Service
+    Color                        BLACK
+    Font.Color                   clWhite
+    Font.Effects                 []
+    Font.Name                    Arial
+    Font.Size                    12
+    Font.Style                   []
+    Glyphs                       (None)
+    Height                       23
+    Layout                       Left
+    LedType                      LargeRect
+    Left                         8
+    Palette.High                 clLime
+    Palette.Low                  BLACK
+    Spacing                      5
+    Top                          244
+    Width                        127
+    OnChanged                    ''
+end
+Led
+    Name                         Led4
+    Alias                        Led4
+    Active                       No
+    Caption                      'Purge Air'
+    Color                        BLACK
+    Font.Color                   clWhite
+    Font.Effects                 []
+    Font.Name                    Arial
+    Font.Size                    12
+    Font.Style                   []
+    Glyphs                       (None)
+    Height                       25
+    Layout                       Left
+    LedType                      LargeRect
+    Left                         8
+    Palette.High                 clFuchsia
+    Palette.Low                  BLACK
+    Spacing                      5
+    Top                          264
+    Width                        139
+    OnChanged                    ''
+end
+Led
+    Name                         Led5
+    Alias                        Led5
+    Active                       No
+    Caption                      Automatic
+    Color                        BLACK
+    Font.Color                   clWhite
+    Font.Effects                 []
+    Font.Name                    Arial
+    Font.Size                    12
+    Font.Style                   []
+    Glyphs                       (None)
+    Height                       22
+    Layout                       Left
+    LedType                      LargeRect
+    Left                         8
+    Palette.High                 clLime
+    Palette.Low                  BLACK
+    Spacing                      5
+    Top                          288
+    Width                        143
+    OnChanged                    ''
+end
+Led
+    Name                         Led6
+    Alias                        Led6
+    Active                       No
+    Caption                      'Feedwater Pump'
+    Color                        BLACK
+    Font.Color                   clWhite
+    Font.Effects                 []
+    Font.Name                    Arial
+    Font.Size                    12
+    Font.Style                   []
+    Glyphs                       (None)
+    Height                       20
+    Layout                       Left
+    LedType                      Rounded
+    Left                         24
+    Palette.High                 SPRINGGREEN
+    Palette.Low                  0x000051
+    Spacing                      5
+    Top                          340
+    Width                        150
+    OnChanged                    ''
+end
+Led
+    Name                         Led7
+    Alias                        Led7
+    Active                       No
+    Caption                      'Regen Pump'
+    Color                        BLACK
+    Font.Color                   clWhite
+    Font.Effects                 []
+    Font.Name                    Arial
+    Font.Size                    12
+    Font.Style                   []
+    Glyphs                       (None)
+    Height                       20
+    Layout                       Left
+    LedType                      Rounded
+    Left                         10
+    Palette.High                 SPRINGGREEN
+    Palette.Low                  0x000051
+    Spacing                      5
+    Top                          360
+    Width                        150
+    OnChanged                    ''
+end
+Led
+    Name                         Led8
+    Alias                        Led8
+    Active                       No
+    Caption                      'Leak Fault'
+    Color                        BLACK
+    Font.Color                   clWhite
+    Font.Effects                 []
+    Font.Name                    Arial
+    Font.Size                    12
+    Font.Style                   []
+    Glyphs                       (None)
+    Height                       20
+    Layout                       Left
+    LedType                      Rounded
+    Left                         2
+    Palette.High                 clRed
+    Palette.Low                  0x000051
+    Spacing                      5
+    Top                          380
+    Width                        150
+    OnChanged                    ''
+end
+RotarySwitch
+    Name                         Rotaryswitch0
+    Alias                        'Function Switch'
+    ButtonColor                  DARKORANGE
+    Color                        BLACK
+    Font.Color                   clYellow
+    Font.Effects                 []
+    Font.Name                    Arial
+    Font.Size                    12
+    Font.Style                   []
+    Height                       180
+    LabelsOffset                 10
+    Left                         212
+    Radius                       80
+    ShowLabel                    Yes
+    SwitchAngleEnd               300
+    SwitchAngleStart             60
+    SwitchColor                  SILVER
+    SwitchPositions              'Off\nRinse\nRegen\nService\nPurge Air\nAuto\n'
+    Top                          196
+    Width                        317
+    WinchColor                   clAqua
+    WinchOffset                  15
+    OnChanged                    'Report Message'
+    OnChanging                   ''
+end
+Timer
+    Name                         Timer0
+    Alias                        Timer0
+    Enabled                      Yes
+    Interval                     1000
+    OnTimer                      ''
+end
+Sounds
+    Name                         Sounds0
+    Alias                        'End of Service Run'
+    WavFiles                     Servic!1.wav
+    OnPlayingChanged             ''
+    OnVolumeChanged              ''
+end
+Strings
+    Name                         Strings0
+    Alias                        'Elapsed Time'
+    Alignment                    Left
+    BGcolor                      BLACK
+    Height                       40
+    FGcolor                      WHITE
+    Font.Bold                    No
+    Font.CharSet                 ANSI
+    Font.Italic                  No
+    Font.Name                    '4D Font3 (8x12)'
+    Font.Opaque                  Yes
+    Font.Size                    -12
+    Font.Strikethrough           No
+    Font.Underline               No
+    Left                         260
+    Strings                      ''
+    StringsStyle                 Message
+    Top                          180
+    Width                        30
+    OnChanged                    ''
+end
+Strings
+    Name                         Strings1
+    Alias                        ElapsedTime
+    Alignment                    Left
+    BGcolor                      BLACK
+    Height                       26
+    FGcolor                      clLime
+    Font.Bold                    Yes
+    Font.CharSet                 ANSI
+    Font.Italic                  No
+    Font.Name                    '4D Font3 (8x12)'
+    Font.Opaque                  Yes
+    Font.Size                    12
+    Font.Strikethrough           No
+    Font.Underline               No
+    Left                         552
+    Strings                      ''
+    StringsStyle                 Message
+    Top                          128
+    Width                        60
+    OnChanged                    ''
+end
+StaticText
+    Name                         Statictext7
+    Alias                        ET
+    Alignment                    Left
+    AutoSize                     Yes
+    Caption                      'Elapsed Time'
+    Color                        BLACK
+    Font.Color                   clYellow
+    Font.Effects                 []
+    Font.Name                    Tahoma
+    Font.Size                    12
+    Font.Style                   []
+    Height                       38
+    Left                         620
+    Top                          120
+    Transparent                  Yes
+    Width                        54
+    WordWrap                     Yes
+end
+Led
+    Name                         Led9
+    Alias                        Led9
+    Active                       No
+    Caption                      'Over Pressure'
+    Color                        BLACK
+    Font.Color                   clWhite
+    Font.Effects                 []
+    Font.Name                    Arial
+    Font.Size                    12
+    Font.Style                   []
+    Glyphs                       (None)
+    Height                       20
+    Layout                       Left
+    LedType                      Rounded
+    Left                         16
+    Palette.High                 clRed
+    Palette.Low                  0x000051
+    Spacing                      5
+    Top                          400
+    Width                        150
+    OnChanged                    ''
+end
+StaticText
+    Name                         Statictext8
+    Alias                        Statictext8
+    Alignment                    Left
+    AutoSize                     Yes
+    Caption                      'Function Selection'
+    Color                        BLACK
+    Font.Color                   clYellow
+    Font.Effects                 []
+    Font.Name                    Tahoma
+    Font.Size                    15
+    Font.Style                   []
+    Height                       30
+    Left                         292
+    Top                          428
+    Transparent                  Yes
+    Width                        165
+    WordWrap                     Yes
+end
+StaticText
+    Name                         Statictext9
+    Alias                        Statictext9
+    Alignment                    Left
+    AutoSize                     Yes
+    Caption                      'Water Hardness (mV)'
+    Color                        BLACK
+    Font.Color                   clYellow
+    Font.Effects                 []
+    Font.Name                    Tahoma
+    Font.Size                    12
+    Font.Style                   []
+    Height                       57
+    Left                         616
+    Top                          252
+    Transparent                  Yes
+    Width                        70
+    WordWrap                     Yes
+end
+Strings
+    Name                         Strings2
+    Alias                        WaterHardness
+    Alignment                    Left
+    BGcolor                      BLACK
+    Height                       25
+    FGcolor                      WHITE
+    Font.Bold                    No
+    Font.CharSet                 ANSI
+    Font.Italic                  No
+    Font.Name                    '4D Font3 (8x12)'
+    Font.Opaque                  Yes
+    Font.Size                    -12
+    Font.Strikethrough           No
+    Font.Underline               No
+    Left                         552
+    Strings                      ''
+    StringsStyle                 Message
+    Top                          260
+    Width                        50
+    OnChanged                    ''
+end
+StaticText
+    Name                         Statictext10
+    Alias                        Statictext10
+    Alignment                    Left
+    AutoSize                     Yes
+    Caption                      'Bed Vols.'
+    Color                        BLACK
+    Font.Color                   clYellow
+    Font.Effects                 []
+    Font.Name                    Tahoma
+    Font.Size                    12
+    Font.Style                   []
+    Height                       38
+    Left                         616
+    Top                          432
+    Transparent                  Yes
+    Width                        35
+    WordWrap                     Yes
+end
+StaticText
+    Name                         Statictext11
+    Alias                        Statictext11
+    Alignment                    Left
+    AutoSize                     Yes
+    Caption                      EC
+    Color                        BLACK
+    Font.Color                   clYellow
+    Font.Effects                 []
+    Font.Name                    Tahoma
+    Font.Size                    12
+    Font.Style                   []
+    Height                       19
+    Left                         620
+    Top                          350
+    Transparent                  Yes
+    Width                        19
+    WordWrap                     Yes
+end
+Strings
+    Name                         Strings3
+    Alias                        Conductivity
+    Alignment                    Left
+    BGcolor                      BLACK
+    Height                       20
+    FGcolor                      WHITE
+    Font.Bold                    No
+    Font.CharSet                 ANSI
+    Font.Italic                  No
+    Font.Name                    '4D Font3 (8x12)'
+    Font.Opaque                  Yes
+    Font.Size                    -12
+    Font.Strikethrough           No
+    Font.Underline               No
+    Left                         550
+    Strings                      ''
+    StringsStyle                 Message
+    Top                          350
+    Width                        50
+    OnChanged                    ''
+end
+Strings
+    Name                         Strings4
+    Alias                        BedVolumes
+    Alignment                    Left
+    BGcolor                      BLACK
+    Height                       30
+    FGcolor                      WHITE
+    Font.Bold                    No
+    Font.CharSet                 ANSI
+    Font.Italic                  No
+    Font.Name                    '4D Font3 (8x12)'
+    Font.Opaque                  Yes
+    Font.Size                    -12
+    Font.Strikethrough           No
+    Font.Underline               No
+    Left                         550
+    Strings                      ''
+    StringsStyle                 Message
+    Top                          435
+    Width                        50
+    OnChanged                    ''
+end
+StaticText
+    Name                         Statictext12
+    Alias                        Statictext12
+    Alignment                    Left
+    AutoSize                     Yes
+    Caption                      'Cum. Ions Exch.'
+    Color                        BLACK
+    Font.Color                   clYellow
+    Font.Effects                 []
+    Font.Name                    Tahoma
+    Font.Size                    12
+    Font.Style                   []
+    Height                       57
+    Left                         620
+    Top                          180
+    Transparent                  Yes
+    Width                        43
+    WordWrap                     Yes
+end
+Strings
+    Name                         Strings5
+    Alias                        CumIonsExch
+    Alignment                    Left
+    BGcolor                      BLACK
+    Height                       35
+    FGcolor                      WHITE
+    Font.Bold                    No
+    Font.CharSet                 ANSI
+    Font.Italic                  No
+    Font.Name                    '4D Font3 (8x12)'
+    Font.Opaque                  Yes
+    Font.Size                    -12
+    Font.Strikethrough           No
+    Font.Underline               No
+    Left                         570
+    Strings                      ''
+    StringsStyle                 Message
+    Top                          180
+    Width                        50
+    OnChanged                    ''
+end
+Led
+    Name                         Led10
+    Alias                        Led10
+    Active                       No
+    Caption                      'End of Service Run'
+    Color                        BLACK
+    Font.Color                   clWhite
+    Font.Effects                 []
+    Font.Name                    Arial
+    Font.Size                    12
+    Font.Style                   []
+    Glyphs                       (None)
+    Height                       20
+    Layout                       Left
+    LedType                      Rounded
+    Left                         32
+    Palette.High                 clRed
+    Palette.Low                  0x000051
+    Spacing                      5
+    Top                          420
+    Width                        150
+    OnChanged                    ''
+end
+UserLed
+    Name                         Userled2
+    Alias                        MasterPowerIndicator
+    Active                       No
+    Bevel.BorderColor            clBtnFace
+    Bevel.BorderWidth            0
+    Bevel.InnerColor             clBtnFace
+    Bevel.InnerHighlight         clLime
+    Bevel.InnerOutline           None
+    Bevel.InnerShadow            0x005100
+    Bevel.InnerSpace             1
+    Bevel.InnerStyle             None
+    Bevel.Innerwidth             1
+    Bevel.OuterColor             clBtnFace
+    Bevel.OuterHighlight         clBtnHighlight
+    Bevel.OuterOutline           Outer
+    Bevel.OuterShadow            clBtnShadow
+    Bevel.OuterSpace             0
+    Bevel.OuterStyle             Raised
+    Bevel.Outerwidth             1
+    Bevel.Visible                Yes
+    Height                       22
+    Left                         32
+    OutlineColor                 BLACK
+    OutlineWidth                 0
+    PaletteEx.High1              clLime
+    PaletteEx.High2              BLACK
+    PaletteEx.Low1               MAROON
+    PaletteEx.Low2               BLACK
+    Top                          64
+    Width                        33
+    OnChanged                    ''
+end
+Timer
+    Name                         Timer1
+    Alias                        Timer1
+    Enabled                      Yes
+    Interval                     1000
+    OnTimer                      ''
+end
+Timer
+    Name                         Timer2
+    Alias                        Timer2
+    Enabled                      Yes
+    Interval                     1000
+    OnTimer                      ''
+end
+Timer
+    Name                         Timer3
+    Alias                        Timer3
+    Enabled                      Yes
+    Interval                     1000
+    OnTimer                      ''
+end
+StaticText
+    Name                         Statictext14
+    Alias                        Statictext14
+    Alignment                    Left
+    AutoSize                     Yes
+    Caption                      'Derivative Clock'
+    Color                        BLACK
+    Font.Color                   YELLOW
+    Font.Effects                 []
+    Font.Name                    Tahoma
+    Font.Size                    10
+    Font.Style                   []
+    Height                       32
+    Left                         44
+    Top                          444
+    Transparent                  Yes
+    Width                        60
+    WordWrap                     Yes
+end
+Strings
+    Name                         Strings6
+    Alias                        'Derivative Clock'
+    Alignment                    Left
+    BGcolor                      BLACK
+    Height                       26
+    FGcolor                      clLime
+    Font.Bold                    Yes
+    Font.CharSet                 ANSI
+    Font.Italic                  No
+    Font.Name                    '4D Font3 (8x12)'
+    Font.Opaque                  Yes
+    Font.Size                    12
+    Font.Strikethrough           No
+    Font.Underline               No
+    Left                         148
+    Strings                      ''
+    StringsStyle                 Message
+    Top                          444
+    Width                        60
+    OnChanged                    ''
+end
+Form
+    Name                         Form1
+    Alias                        Form1
+    Bgtype                       Color
+    Color                        BLACK
+    Image                        (None)
+    Source.Height                0
+    Source.Left                  0
+    Source.Top                   0
+    Source.Width                 0
+    OnActivate                   ''
+    OnCreate                     ''
+    OnRepeat                     ''
+    OnTouchMoving                ''
+    OnTouchPressed               ''
+    OnTouchReleased              ''
+end
+Keyboard
+    Name                         Keyboard0
+    Alias                        Keyboard0
+    AutoCapsDisplay              Yes
+    Fill                         (Default)
+    Font.Color                   BLACK
+    Font.Effects                 []
+    Font.Name                    Tahoma
+    Font.Size                    8
+    Font.Style                   []
+    Height                       294
+    HighlightCaps                BLACK
+    KeyboardType                 KB1
+    KeyDistance                  0
+    Left                         288
+    SmallFont.Color              BLACK
+    SmallFont.Effects            []
+    SmallFont.Name               Tahoma
+    SmallFont.Size               7
+    SmallFont.Style              []
+    Top                          154
+    Width                        250
+    OnChanged                    ''
+end
+StaticText
+    Name                         Statictext15
+    Alias                        Statictext15
+    Alignment                    Left
+    AutoSize                     Yes
+    Caption                      'PIN Number Entry'
+    Color                        BLACK
+    Font.Color                   0x260FF1
+    Font.Effects                 []
+    Font.Name                    Tahoma
+    Font.Size                    15
+    Font.Style                   []
+    Height                       48
+    Left                         300
+    Top                          79
+    Transparent                  Yes
+    Width                        200
+    WordWrap                     Yes
+end
+Form
+    Name                         Form2
+    Alias                        Form2
+    Bgtype                       Color
+    Color                        BLACK
+    Image                        (None)
+    Source.Height                0
+    Source.Left                  0
+    Source.Top                   0
+    Source.Width                 0
+    OnActivate                   ''
+    OnCreate                     ''
+    OnRepeat                     ''
+    OnTouchMoving                ''
+    OnTouchPressed               ''
+    OnTouchReleased              ''
+end
