@@ -1,4 +1,4 @@
-//Armando Correa 2.17.2024
+//Armando Correa 3.14.2024
 #include <genieArduinoDEV.h>
 #include <genie_buffer.h>
 #include "HCPCA9685.h"
@@ -143,6 +143,8 @@ void SteadyService() {
   HCPCA9685.Servo(VALVE6, APOS);
   delay(ValveStagger);
   startTime = millis();
+  RunVolume = 0;
+  WaterHardnessCounter = 0;
 }
 
 void SteadyRinse() {
@@ -167,6 +169,7 @@ void SteadyRinse() {
   delay(ValveStagger);
   //starts counting from when the button is pressed to begin displaying values
   startTime = millis();
+  RunVolume = 0;
 }
 
 void SteadyRegen() {
@@ -191,6 +194,7 @@ void SteadyRegen() {
   delay(ValveStagger);
   delay(100);
   startTime = millis();
+  RunVolume = 0;
 }
 
 void PurgeMode() {
@@ -214,6 +218,7 @@ void PurgeMode() {
   HCPCA9685.Servo(VALVE6, BPOS);
   delay(ValveStagger);
   startTime = millis();
+  RunVolume = 0;
 }
 
 void TransService() {
@@ -237,6 +242,8 @@ void TransService() {
   HCPCA9685.Servo(VALVE6, APOS);
   delay(ValveStagger);
   startTime = millis();
+  RunVolume = 0;
+  WaterHardnessCounter = 0;
 }
 
 void TransRinse() {
@@ -260,6 +267,7 @@ void TransRinse() {
   HCPCA9685.Servo(VALVE6, BPOS);
   delay(ValveStagger);
   startTime = millis();
+  RunVolume = 0;
 }
 
 void TransRegen() {
@@ -283,6 +291,7 @@ void TransRegen() {
   HCPCA9685.Servo(VALVE6, APOS);
   delay(ValveStagger);
   startTime = millis();
+  RunVolume = 0;
 }
 
 void ShutdownProcedure() {
@@ -466,18 +475,18 @@ void ReadSensors() {
   WaterHardness = (CumTotalWaterHardness/numsample); //should result in mV averages 500 samples, converts to V then mV (1/65)
   if (elapsedTime % 1800000 == 0)  // if 30 minutes has passed
   {
-     if (WaterHardness - OldWaterHardness > 70 && WaterHardnessCounter < 100000)  // if difference between current water hardness sample and old water hardness sample is greater than 70 bits ~ 0.005V change on Jenway meter
+     if (WaterHardness - OldWaterHardness > 70)  // if difference between current water hardness sample and old water hardness sample is greater than 70 bits ~ 0.005V change on Jenway meter
     {
       OldWaterHardness = WaterHardness;
       WaterHardnessCounter = WaterHardnessCounter + 1;  // increments counter
-      if (WaterHardnessCounter > 3) {
+      if (WaterHardnessCounter > 3 && WaterHardnessCounter < 100000 ) {
         genie.WriteObject(GENIE_OBJ_LED, EndOfServiceLED, 1);
         genie.WriteStr(DerivativeClockString, String(hours) + ":" + (minutes < 10 ? "0" : "") + String(minutes) + ":" + (seconds < 10 ? "0" : "") + String(seconds));
         WaterHardnessCounter = 100000;
       }
     }
   }
-  Flow = analogRead(FlowMeterPin)*BitsToVolts * (0.25) * (0.9103);//convert bits top volts, multiply by .25 to get ml and 0.9103 is the expected vs. actual factor 
+  Flow = analogRead(FlowMeterPin)*BitsToVolts * (50)*(0.25) * (0.9103);//convert bits top volts, multiply by .25 to get ml and 0.9103 is the expected vs. actual factor 
   RunVolume = RunVolume + Flow; // Run Volume is in Bed Volumes ~ 551mL 
   EC = analogRead(ECpin);
   Pressure = analogRead(PressurePin);
